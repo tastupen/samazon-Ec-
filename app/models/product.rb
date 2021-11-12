@@ -5,4 +5,7 @@ class Product < ApplicationRecord
   def reviews_new
       reviews.new
   end
+  
+  #いいね機能
+  acts_as_likeable
 end
