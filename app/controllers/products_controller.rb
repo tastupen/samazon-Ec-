@@ -3,10 +3,18 @@ class ProductsController < ApplicationController
   PER = 15
   
   def index
-    @products = Product.display_list(category_params, params[:page])
-    @category = Category.request_category(category_params)
+    if sort_params.present?
+      @products = Product.sort_products(sort_params, params[:page])
+      @category = Category.request_category(category_params)
+    elsif params[:category].present?
+      @category = Category.request_category(params[:category])
+      @products = Product.category_products(@category, params[:page])
+    else
+      @products = Product.display_list(params[:page])
+    end
     @categories = Category.all
     @major_category_names = Category.major_categories
+    @sort_list = Product.sort_list
   end
 
   def show
@@ -54,8 +62,7 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
   end
   
-  def category_params
-    params[:category].present? ? params[:category]
-                               : "none"
+  def sort_params
+    params.permit(:sort, :sort_category)
   end
 end
