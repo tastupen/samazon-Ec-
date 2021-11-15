@@ -6,4 +6,15 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable
          
   acts_as_liker
+  
+  def update_password(params *options)
+    if params[:password].present?
+      params.delete(:password)
+      params.delete(:password_confirmation) if params[:password_confirmation].blank?
+    end
+    
+    result = update(params, *options)
+    clean_up_passwords
+    result
+  end
 end
