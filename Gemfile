@@ -52,6 +52,9 @@ gem 'jquery-rails'
  
  # それらしい値を自動生成できる
  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
+ 
+ # ショッピングカートを実装できる
+ gem 'acts_as_shopping_cart'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
