@@ -6,6 +6,10 @@ class Product < ApplicationRecord
       reviews.new
   end
   
+  def reviews_with_id
+    reviews.reviews_with_id
+  end
+  
   PER = 15
   
   scope :display_list, -> (page) { page(page).per(PER) }
