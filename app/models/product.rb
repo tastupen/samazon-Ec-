@@ -10,15 +10,18 @@ class Product < ApplicationRecord
     reviews.reviews_with_id
   end
   
-  PER = 15
   
-  scope :display_list, -> (page) { page(page).per(PER) }
+  extend DisplayList
   scope :on_category, -> (category) { where(category_id: category) }
   
   scope :sort_order, -> (order) { order(order) }
   scope :category_products, -> (category, page) { 
     on_category(category).
     display_list(page)
+  }
+  
+  scope :search_for_id_and_name, -> (keyword) {
+    where("name LIKE ?", "%#{keyword}%").or(where("id LIKE ?", "%#{keyword}%"))
   }
   
   scope :sort_products, -> (sort_order, page) {

@@ -7,6 +7,9 @@ class User < ApplicationRecord
          
   acts_as_liker
   
+  extend DisplayList
+  extend SwitchFlg
+  
   def update_password(params, *options)
     if params[:password].present?
       params.delete(:password)
@@ -17,4 +20,14 @@ class User < ApplicationRecord
     clean_up_passwords
     result
   end
+  
+  scope :search_information, -> (keyword) {
+    where("name LIKE :keyword 
+    OR id LIKE :keyword 
+    OR email LIKE :keyword 
+    OR address LIKE :keyword 
+    OR postal_code LIKE :keyword 
+    OR phone LIKE :keyword", 
+    keyword: "%#{keyword}%")
+  }
 end
