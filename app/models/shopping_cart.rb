@@ -5,6 +5,9 @@ class ShoppingCart < ApplicationRecord
         0
     end
     
+    CARRIAGE=800
+    FREE_SHIPPING=0
+    
     scope :set_user_cart, -> (user) { user_cart = where(user_id: user.id, buy_flag: false)&.last
                                 user_cart.nil? ? ShoppingCart.create(user_id: user.id)
                                 : user_cart }
@@ -68,5 +71,12 @@ class ShoppingCart < ApplicationRecord
           array[i][:average] = total / daily_sales.count
         end
         return array
+    end
+    
+    def shopping_cost
+      product_ids = ShoppingCartItem.user_cart_item_ids(self.id)
+      products_carriage_list = Product.check_products_carriage_list(product_ids)
+      products_carriage_list.include?(true) ? Money.new(CARRIAGE * 100)
+                                            : Money.new(FREE_SHIPPING)
     end
 end

@@ -42,6 +42,8 @@ class Product < ApplicationRecord
   
   scope :recently_products, -> (number) { order(created_at: "desc").take(number) }
   scope :recommend_products, -> (number) { where(recommended_flag: true).take(number) }
+  scope :check_products_carriage_list, -> (product_ids) { where(id: product_ids).pluck(:carriage_flag)}
+
   
   #いいね機能
   acts_as_likeable
