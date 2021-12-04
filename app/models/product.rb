@@ -44,8 +44,36 @@ class Product < ApplicationRecord
   scope :recently_products, -> (number) { order(created_at: "desc").take(number) }
   scope :recommend_products, -> (number) { where(recommended_flag: true).take(number) }
   scope :check_products_carriage_list, -> (product_ids) { where(id: product_ids).pluck(:carriage_flag)}
-
+  
+  def self.import_csv(file)
+    new_products = []
+    update_products = []
+    
+    CSV.foreach(file.path, headers: true, encoding: "Shift_JIS:UTF-8") do |row|
+      row_to_hash = row.to_hash
+      byebug
+      if row_to_hash[:id].present?
+        update_product = find(id: row_to_hash[:id])
+        update_product.attributes = row.to_hash.slice!(csv_attributes)
+        update_products << update_product
+      else
+        new_product = new
+        new_product.attributes = row.to_hash.slice!(csv_attributes)
+        new_products << new_product
+      end
+    end
+    if update_products.present?
+      import update_products, on_duplicate_key_update: csv_attributes
+    elsif
+      import new_products
+    end
+  end
   
   #いいね機能
   acts_as_likeable
+  
+  private
+    def self.csv_attributes
+      [:name, :description, :price, :recommended_flag, :carriage_flag]
+    end
 end
